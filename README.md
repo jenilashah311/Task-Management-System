@@ -4,6 +4,38 @@ A full-stack task management app built for the Microchip Technology engineering 
 
 ---
 
+## Screenshots
+
+**Login Page**
+
+![Login Page](screenshots/01-login.png)
+
+**Form Validation — Empty Fields**
+
+![Form Validation](screenshots/02-login-validation.png)
+
+**Inline Error — Wrong Credentials**
+
+![Login Error](screenshots/03-login-error.png)
+
+**Task Dashboard — Grid View**
+
+![Dashboard Grid](screenshots/04-dashboard-grid.png)
+
+**Pagination**
+
+![Pagination](screenshots/05-dashboard-pagination.png)
+
+**Task Dashboard — List View**
+
+![Dashboard List](screenshots/06-dashboard-list.png)
+
+**Create New Task**
+
+![Create Task](screenshots/07-create-task.png)
+
+---
+
 ## Stack
 
 | Layer      | Technology                                                              |
