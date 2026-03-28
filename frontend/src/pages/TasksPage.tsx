@@ -70,40 +70,50 @@ export default function TasksPage() {
 
   const total = data?.pagination.total ?? 0;
 
+  const selectClass = 'w-full appearance-none px-3 py-2.5 pr-8 text-sm font-medium rounded-lg bg-slate-700 text-white border-0 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer shadow-sm';
+
   const sidebarFilters = (
-    <>
-      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider px-2 pb-1">
+    <div className="px-3 pt-2">
+      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
         Filters
       </p>
-      <select
-        value={filters.status || ''}
-        onChange={(e) => handleFilterChange({ status: (e.target.value as TaskStatus) || undefined })}
-        className="w-full px-3 py-2 text-sm rounded-lg bg-slate-800 border border-slate-700 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
-        <option value="">All Statuses</option>
-        <option value="TODO">To Do</option>
-        <option value="IN_PROGRESS">In Progress</option>
-        <option value="DONE">Done</option>
-      </select>
-      <select
-        value={filters.assignedToId || ''}
-        onChange={(e) => handleFilterChange({ assignedToId: e.target.value || undefined })}
-        className="w-full px-3 py-2 text-sm rounded-lg bg-slate-800 border border-slate-700 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
-        <option value="">All Members</option>
-        {users.map((u) => (
-          <option key={u.id} value={u.id}>{u.name}</option>
-        ))}
-      </select>
-      {(filters.status || filters.assignedToId) && (
-        <button
-          onClick={() => handleFilterChange({ status: undefined, assignedToId: undefined })}
-          className="w-full px-3 py-2 text-xs text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors text-left"
-        >
-          Clear filters
-        </button>
-      )}
-    </>
+      <div className="space-y-2">
+        <div className="relative">
+          <select
+            value={filters.status || ''}
+            onChange={(e) => handleFilterChange({ status: (e.target.value as TaskStatus) || undefined })}
+            className={selectClass}
+          >
+            <option value="">All Statuses</option>
+            <option value="TODO">To Do</option>
+            <option value="IN_PROGRESS">In Progress</option>
+            <option value="DONE">Done</option>
+          </select>
+          <svg className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+        </div>
+        <div className="relative">
+          <select
+            value={filters.assignedToId || ''}
+            onChange={(e) => handleFilterChange({ assignedToId: e.target.value || undefined })}
+            className={selectClass}
+          >
+            <option value="">All Members</option>
+            {users.map((u) => (
+              <option key={u.id} value={u.id}>{u.name}</option>
+            ))}
+          </select>
+          <svg className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+        </div>
+        {(filters.status || filters.assignedToId) && (
+          <button
+            onClick={() => handleFilterChange({ status: undefined, assignedToId: undefined })}
+            className="w-full px-3 py-2.5 text-sm font-medium rounded-lg text-slate-400 hover:text-white hover:bg-slate-700 transition-colors text-left"
+          >
+            Clear filters
+          </button>
+        )}
+      </div>
+    </div>
   );
 
   return (

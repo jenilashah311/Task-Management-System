@@ -40,7 +40,7 @@ export default function Layout({ children, sidebarExtra }: LayoutProps) {
         </a>
 
         {sidebarExtra && (
-          <div className="mt-4 px-1 space-y-2">
+          <div className="mt-3 border-t border-slate-700/60 pt-3">
             {sidebarExtra}
           </div>
         )}
