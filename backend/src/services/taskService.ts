@@ -50,15 +50,23 @@ export async function getTaskById(id: string) {
   return task;
 }
 
-export async function createTask(data: {
-  title: string;
-  description?: string;
-  status?: TaskStatus;
-  priority?: TaskPriority;
-  dueDate?: string;
-  assignedToId?: string;
-  createdById: string;
-}) {
+export async function createTask(
+  data: {
+    title: string;
+    description?: string;
+    status?: TaskStatus;
+    priority?: TaskPriority;
+    dueDate?: string;
+    assignedToId?: string;
+    createdById: string;
+  },
+  requestingUser: { id: string; role: string }
+) {
+  // Members can only assign tasks to themselves or leave them unassigned
+  if (requestingUser.role !== 'ADMIN' && data.assignedToId && data.assignedToId !== requestingUser.id) {
+    throw createError('You can only assign tasks to yourself.', 403);
+  }
+
   if (data.assignedToId) {
     const assignee = await prisma.user.findFirst({ where: { id: data.assignedToId, deletedAt: null } });
     if (!assignee) throw createError('Assigned user not found.', 400);

@@ -239,7 +239,7 @@ export default function TasksPage() {
       {showForm && (
         <TaskForm
           task={editingTask}
-          users={users}
+          users={isAdmin ? users : users.filter((u) => u.id === user?.id)}
           onSubmit={handleSubmitTask}
           onClose={handleCloseForm}
           isSubmitting={createTask.isPending || updateTask.isPending}
