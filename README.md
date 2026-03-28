@@ -6,18 +6,6 @@ A full-stack task management app built for the Microchip Technology engineering 
 
 ## Screenshots
 
-**Login Page**
-
-![Login Page](screenshots/01-login.png)
-
-**Form Validation — Empty Fields**
-
-![Form Validation](screenshots/02-login-validation.png)
-
-**Inline Error — Wrong Credentials**
-
-![Login Error](screenshots/03-login-error.png)
-
 **Task Dashboard — Grid View**
 
 ![Dashboard Grid](screenshots/04-dashboard-grid.png)
@@ -169,9 +157,16 @@ Each card shows title, description, status, priority, assignee, and due date. Du
 
 ### Role-Based Access
 
-Admins can edit and delete any task. Members can only edit and delete tasks that are assigned to them.
+| Action      | Admin | Creator | Assignee | Other member |
+|-------------|-------|---------|----------|--------------|
+| Create task | Yes   | —       | —        | Yes          |
+| Assign task | Any   | Any     | Any      | Any          |
+| Edit task   | Yes   | Yes     | Yes      | No           |
+| Delete task | Yes   | No      | No       | No           |
 
-The edit and delete buttons are visible to everyone. For tasks a member can't act on, the buttons are grayed out and disabled with a tooltip that explains why. Access is also enforced on the backend — calling the API directly with a member token on a restricted task returns a 403.
+Anyone can create a task and assign it to any team member. Creators and assignees can edit their tasks. Only admins can delete tasks.
+
+Edit and delete buttons are visible to everyone. Buttons that a user doesn't have permission to use are grayed out and disabled, with a tooltip explaining why. The same rules are enforced on the backend — the API returns 403 if a member tries to act on a task they don't own.
 
 ### Responsive Design
 - Sidebar on desktop (768px and wider)
