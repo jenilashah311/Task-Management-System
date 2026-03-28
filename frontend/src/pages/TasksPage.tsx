@@ -25,8 +25,8 @@ export default function TasksPage() {
   const [viewMode,      setViewMode]      = useState<ViewMode>('grid');
 
   const isAdmin = user?.role === 'ADMIN';
-  const canEditTask   = (task: Task) => isAdmin || task.assignedTo?.id === user?.id;
-  const canDeleteTask = (task: Task) => isAdmin || task.assignedTo?.id === user?.id;
+  const canEditTask   = (task: Task) => isAdmin || task.createdBy?.id === user?.id || task.assignedTo?.id === user?.id;
+  const canDeleteTask = (_task: Task) => isAdmin;
 
   const { data, isLoading, isError } = useTasks(filters);
   const { data: users = [] }         = useUsers();
@@ -193,7 +193,7 @@ export default function TasksPage() {
                         <button
                           onClick={() => canEditTask(task) && handleOpenEdit(task)}
                           disabled={!canEditTask(task)}
-                          title={canEditTask(task) ? 'Edit task' : 'You can only edit tasks assigned to you'}
+                          title={canEditTask(task) ? 'Edit task' : 'You can only edit tasks you created or are assigned to'}
                           className={`px-2.5 py-1 text-xs rounded-lg transition-colors font-medium ${
                             canEditTask(task)
                               ? 'text-blue-600 hover:bg-blue-50 cursor-pointer'
@@ -205,7 +205,7 @@ export default function TasksPage() {
                         <button
                           onClick={() => canDeleteTask(task) && setDeletingId(task.id)}
                           disabled={!canDeleteTask(task)}
-                          title={canDeleteTask(task) ? 'Delete task' : 'You can only delete tasks assigned to you'}
+                          title={canDeleteTask(task) ? 'Delete task' : 'Only admins can delete tasks'}
                           className={`px-2.5 py-1 text-xs rounded-lg transition-colors font-medium ${
                             canDeleteTask(task)
                               ? 'text-red-600 hover:bg-red-50 cursor-pointer'
@@ -239,7 +239,7 @@ export default function TasksPage() {
       {showForm && (
         <TaskForm
           task={editingTask}
-          users={isAdmin ? users : users.filter((u) => u.id === user?.id)}
+          users={users}
           onSubmit={handleSubmitTask}
           onClose={handleCloseForm}
           isSubmitting={createTask.isPending || updateTask.isPending}

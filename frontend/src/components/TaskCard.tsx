@@ -14,11 +14,12 @@ export default function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
   const { user } = useAuth();
 
   const isAdmin    = user?.role === 'ADMIN';
+  const isCreator  = task.createdBy?.id === user?.id;
   const isAssignee = task.assignedTo?.id === user?.id;
 
-  // Admins can manage any task; members can only manage tasks assigned to them
-  const canEdit   = isAdmin || isAssignee;
-  const canDelete = isAdmin || isAssignee;
+  // Members can edit tasks they created or are assigned to; only admins can delete
+  const canEdit   = isAdmin || isCreator || isAssignee;
+  const canDelete = isAdmin;
 
   const isOverdue =
     task.dueDate &&
@@ -33,7 +34,7 @@ export default function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
         <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
           <button
             onClick={() => canEdit && onEdit(task)}
-            title={canEdit ? 'Edit task' : 'You can only edit tasks assigned to you'}
+            title={canEdit ? 'Edit task' : 'You can only edit tasks you created or are assigned to'}
             disabled={!canEdit}
             className={`p-1.5 rounded-lg transition-colors ${
               canEdit
@@ -45,7 +46,7 @@ export default function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
           </button>
           <button
             onClick={() => canDelete && onDelete(task.id)}
-            title={canDelete ? 'Delete task' : 'You can only delete tasks assigned to you'}
+            title={canDelete ? 'Delete task' : 'Only admins can delete tasks'}
             disabled={!canDelete}
             className={`p-1.5 rounded-lg transition-colors ${
               canDelete

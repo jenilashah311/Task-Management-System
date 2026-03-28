@@ -39,7 +39,7 @@ export async function createTask(req: AuthenticatedRequest, res: Response, next:
       res.status(400).json({ message: 'Validation failed', errors: errors.array() });
       return;
     }
-    const task = await taskService.createTask({ ...req.body, createdById: req.user!.id }, req.user!);
+    const task = await taskService.createTask({ ...req.body, createdById: req.user!.id });
     res.status(201).json(task);
   } catch (err) {
     next(err);

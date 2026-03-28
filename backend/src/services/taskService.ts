@@ -50,23 +50,15 @@ export async function getTaskById(id: string) {
   return task;
 }
 
-export async function createTask(
-  data: {
-    title: string;
-    description?: string;
-    status?: TaskStatus;
-    priority?: TaskPriority;
-    dueDate?: string;
-    assignedToId?: string;
-    createdById: string;
-  },
-  requestingUser: { id: string; role: string }
-) {
-  // Members can only assign tasks to themselves or leave them unassigned
-  if (requestingUser.role !== 'ADMIN' && data.assignedToId && data.assignedToId !== requestingUser.id) {
-    throw createError('You can only assign tasks to yourself.', 403);
-  }
-
+export async function createTask(data: {
+  title: string;
+  description?: string;
+  status?: TaskStatus;
+  priority?: TaskPriority;
+  dueDate?: string;
+  assignedToId?: string;
+  createdById: string;
+}) {
   if (data.assignedToId) {
     const assignee = await prisma.user.findFirst({ where: { id: data.assignedToId, deletedAt: null } });
     if (!assignee) throw createError('Assigned user not found.', 400);
@@ -101,9 +93,11 @@ export async function updateTask(
   const existing = await prisma.task.findFirst({ where: { id, deletedAt: null } });
   if (!existing) throw createError('Task not found.', 404);
 
-  // Members can only edit tasks assigned to them
-  if (requestingUser.role !== 'ADMIN' && existing.assignedToId !== requestingUser.id) {
-    throw createError('You can only edit tasks assigned to you.', 403);
+  // Members can edit tasks they created or are assigned to
+  const isCreator  = existing.createdById   === requestingUser.id;
+  const isAssignee = existing.assignedToId  === requestingUser.id;
+  if (requestingUser.role !== 'ADMIN' && !isCreator && !isAssignee) {
+    throw createError('You can only edit tasks you created or are assigned to.', 403);
   }
 
   if (data.assignedToId) {
@@ -129,9 +123,9 @@ export async function deleteTask(id: string, requestingUser: { id: string; role:
   const task = await prisma.task.findFirst({ where: { id, deletedAt: null } });
   if (!task) throw createError('Task not found.', 404);
 
-  // Members can only delete tasks assigned to them
-  if (requestingUser.role !== 'ADMIN' && task.assignedToId !== requestingUser.id) {
-    throw createError('You can only delete tasks assigned to you.', 403);
+  // Only admins can delete tasks
+  if (requestingUser.role !== 'ADMIN') {
+    throw createError('Only admins can delete tasks.', 403);
   }
 
   // Soft delete — keeps the record around in case it needs to be restored later.
