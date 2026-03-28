@@ -4,9 +4,10 @@ import { useAuth } from '../contexts/AuthContext';
 
 interface LayoutProps {
   children: React.ReactNode;
+  sidebarExtra?: React.ReactNode;
 }
 
-export default function Layout({ children }: LayoutProps) {
+export default function Layout({ children, sidebarExtra }: LayoutProps) {
   const { user, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -37,6 +38,12 @@ export default function Layout({ children }: LayoutProps) {
           <CheckSquare className="w-4 h-4" />
           All Tasks
         </a>
+
+        {sidebarExtra && (
+          <div className="mt-4 px-1 space-y-2">
+            {sidebarExtra}
+          </div>
+        )}
       </nav>
 
       {/* User profile */}

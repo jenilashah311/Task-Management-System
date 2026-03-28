@@ -3,15 +3,15 @@ import { Plus, ClipboardList, LayoutGrid, List } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTasks, useCreateTask, useUpdateTask, useDeleteTask } from '../hooks/useTasks';
 import { useUsers } from '../hooks/useUsers';
-import { Task, TaskFilters } from '../types';
+import { Task, TaskFilters, TaskStatus } from '../types';
 import TaskCard from '../components/TaskCard';
 import TaskForm from '../components/TaskForm';
-import TaskFiltersBar from '../components/TaskFilters';
 import Pagination from '../components/Pagination';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ConfirmDialog from '../components/ConfirmDialog';
 import StatusBadge from '../components/StatusBadge';
 import PriorityBadge from '../components/PriorityBadge';
+import Layout from '../components/Layout';
 import { User2, Calendar } from 'lucide-react';
 
 type ViewMode = 'grid' | 'list';
@@ -70,7 +70,44 @@ export default function TasksPage() {
 
   const total = data?.pagination.total ?? 0;
 
+  const sidebarFilters = (
+    <>
+      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider px-2 pb-1">
+        Filters
+      </p>
+      <select
+        value={filters.status || ''}
+        onChange={(e) => handleFilterChange({ status: (e.target.value as TaskStatus) || undefined })}
+        className="w-full px-3 py-2 text-sm rounded-lg bg-slate-800 border border-slate-700 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        <option value="">All Statuses</option>
+        <option value="TODO">To Do</option>
+        <option value="IN_PROGRESS">In Progress</option>
+        <option value="DONE">Done</option>
+      </select>
+      <select
+        value={filters.assignedToId || ''}
+        onChange={(e) => handleFilterChange({ assignedToId: e.target.value || undefined })}
+        className="w-full px-3 py-2 text-sm rounded-lg bg-slate-800 border border-slate-700 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        <option value="">All Members</option>
+        {users.map((u) => (
+          <option key={u.id} value={u.id}>{u.name}</option>
+        ))}
+      </select>
+      {(filters.status || filters.assignedToId) && (
+        <button
+          onClick={() => handleFilterChange({ status: undefined, assignedToId: undefined })}
+          className="w-full px-3 py-2 text-xs text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors text-left"
+        >
+          Clear filters
+        </button>
+      )}
+    </>
+  );
+
   return (
+    <Layout sidebarExtra={sidebarFilters}>
     <div className="p-5 lg:p-8 max-w-7xl mx-auto">
 
       {/* Page header */}
@@ -111,8 +148,17 @@ export default function TasksPage() {
         </div>
       </div>
 
-      {/* Filters */}
-      <TaskFiltersBar filters={filters} users={users} onChange={handleFilterChange} />
+      {/* Search bar */}
+      <div className="relative">
+        <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+        <input
+          type="text"
+          placeholder="Search tasks…"
+          value={filters.search || ''}
+          onChange={(e) => handleFilterChange({ search: e.target.value || undefined })}
+          className="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+        />
+      </div>
 
       {/* Content area */}
       <div className="mt-5">
@@ -258,5 +304,6 @@ export default function TasksPage() {
         variant="danger"
       />
     </div>
+    </Layout>
   );
 }

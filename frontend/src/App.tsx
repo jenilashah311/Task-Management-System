@@ -5,7 +5,6 @@ import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import LoginPage from './pages/LoginPage';
 import TasksPage from './pages/TasksPage';
-import Layout from './components/Layout';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -41,9 +40,7 @@ function AppRoutes() {
         path="/"
         element={
           <PrivateRoute>
-            <Layout>
-              <TasksPage />
-            </Layout>
+            <TasksPage />
           </PrivateRoute>
         }
       />
